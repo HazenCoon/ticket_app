@@ -46,12 +46,12 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[250],
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Text('Anmeldung'),
+        title: const Text('Anmeldung'),
         centerTitle: true,
         backgroundColor: Colors.lightBlue,
-        titleTextStyle: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        titleTextStyle: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -65,7 +65,7 @@ class LoginScreenState extends State<LoginScreen> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha: 76),
+                  color: Colors.grey.shade50,
                   blurRadius: 10,
                   offset: const Offset(0, 5),
                 ),
