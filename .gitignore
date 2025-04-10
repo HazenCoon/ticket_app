@@ -1,9 +1,89 @@
-# Miscellaneous
-*.class
+# ---------------------------------
+# 🐦 FLUTTER & DART
+# ---------------------------------
+.dart_tool/
+.packages
+.pub/
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+build/
+coverage/
+pubspec.lock
+
+# ---------------------------------
+# 🛠️ IDEs & Tools
+# ---------------------------------
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# ---------------------------------
+# 📱 PLATFORM-SPECIFIC FLUTTER
+# ---------------------------------
+
+# iOS
+**/ios/Flutter/.last_build_id
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Pods/
+
+# macOS
+macos/Flutter/ephemeral/
+macos/Pods/
+
+# Android
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/.gradle/
+android/.idea/
+android/local.properties
+android/.settings/
+
+# Windows
+windows/Flutter/ephemeral/
+
+# Linux
+linux/flutter/ephemeral/
+
+# Web
+web/.dart_tool/
+web/.packages
+
+# ---------------------------------
+# 🧪 GENERATED + DEBUG
+# ---------------------------------
 *.log
-*.pyc
+*.tmp
 *.swp
+*.lock
+*.bak
+*.old
+
+# ---------------------------------
+# 🛑 SYSTEM FILES
+# ---------------------------------
 .DS_Store
+Thumbs.db
+
+# ---------------------------------
+# 🔒 OPTIONAL SECRETS (nur falls du Firebase nutzt)
+#android/app/google-services.json
+#ios/Runner/GoogleService-Info.plist
+
+# ---------------------------------
+# ❌ Plugin-Registrierung (wird automatisch generiert)
+**/generated_plugin_registrant.*
+**/GeneratedPluginRegistrant.*
+
+# ---------------------------------
+# ❓ Andere Tools / Migration
 .atom/
 .build/
 .buildlog/
@@ -11,35 +91,3 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release

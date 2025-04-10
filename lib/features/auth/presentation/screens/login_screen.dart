@@ -51,7 +51,10 @@ class LoginScreenState extends State<LoginScreen> {
         title: const Text('Anmeldung'),
         centerTitle: true,
         backgroundColor: Colors.lightBlue,
-        titleTextStyle: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        titleTextStyle: const TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(
