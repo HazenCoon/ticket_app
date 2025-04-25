@@ -1,156 +1,134 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test1/core/network/api_client.dart';
+import 'package:test1/core/routing/app_routes.dart';
 
-import '../../../presentation/screens/dashboard_screen.dart';
-
+// LoginScreen Widget
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  LoginScreenState createState() => LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen> {
-  // Controller für E-Mail und Password
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwortController = TextEditingController();
+// Zustand & Controller
+class _LoginScreenState extends State<LoginScreen> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _loading = false;
+  String? _error;
 
-  // GlobalKey für das Formular
-  final _formKey = GlobalKey<FormState>();
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
-  // Variable zum Steuern der Anzeige 'Passwort anzeigen'
-  bool _obscureText = true;
+  // Methode zum Speichern des Tokens
+  Future<void> saveToken(String token) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('access_token', token);
+  }
 
-  // Dummy-Funktion für das Anmelden
-  void _login() {
-    if (_formKey.currentState?.validate() ?? false) {
-      //Implementierung der Anmeldelogik
-      final email = _usernameController.text;
-      final passwort = _passwortController.text;
+  // Login-Methode
+  void _login() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
 
-      if (email == 'user@example.com' && passwort == 'passwort') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
-        );
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Erfolgreich eingeloggt')));
-      } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Ungültige Anmeldedaten')));
+    // Anzeige von Ladeindikator, Fehler zurücksetzen
+    try {
+      final token = await ApiClient.authenticate(
+        _usernameController.text,
+        _passwordController.text,
+      );
+
+      // Benutzername und Passwort werden an die API geschickt
+      await saveToken(token);
+
+      // Routing zum Dashboard
+      if (mounted) {
+        Navigator.pushNamed(context, AppRoutes.dashboard, arguments: token);
+      }
+
+      // Fehler wird in _error gespeichert
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          final errorMsg = e.toString().toLowerCase();
+          if (errorMsg.contains('401') || errorMsg.contains('unauthorized')) {
+            _error = 'Benutzername oder Passwort ist falsch.';
+          } else if (errorMsg.contains('timeout')) {
+            _error = 'Zeitüberschreitung bei der Verbindung.';
+          } else {
+            _error = 'Ein Fehler ist aufgetreten: ${e.toString()}';
+          }
+        });
+      }
+
+      // Ladeanimation wird auf false gesetzt
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
       }
     }
+  }
+
+  Widget _buildLoginForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextField(
+          controller: _usernameController,
+          decoration: const InputDecoration(labelText: 'Benutzername'),
+          onChanged: (_) => setState(() {}),
+        ),
+
+        const SizedBox(height: 10),
+
+        TextField(
+          controller: _passwordController,
+          obscureText: true,
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => _login(),
+          decoration: const InputDecoration(labelText: 'Passwort'),
+          onChanged: (_) => setState(() {}),
+        ),
+
+        const SizedBox(height: 20),
+
+        if (_error != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(_error!, style: const TextStyle(color: Colors.red)),
+          ),
+
+        if (_loading)
+          const Center(child: CircularProgressIndicator())
+        else
+          ElevatedButton(
+            onPressed:
+                _usernameController.text.isEmpty ||
+                        _passwordController.text.isEmpty
+                    ? null
+                    : _login,
+            child: const Text('Login'),
+          ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      appBar: AppBar(
-        title: const Text('Anmeldung'),
-        centerTitle: true,
-        backgroundColor: Colors.lightBlue,
-        titleTextStyle: const TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            width: 600,
-            constraints: BoxConstraints(minHeight: 450),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade50,
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // E-Mail Eingabefeld
-                  TextFormField(
-                    controller: _usernameController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'E-Mail',
-                      hintText: 'Bitte geben Sie Ihre E-Mail-Adresse ein',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Bitte geben Sie Ihre E-Mail-Adresse ein';
-                      }
-                      // E-Mail-Validierung
-                      if (!RegExp(
-                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                      ).hasMatch(value)) {
-                        return 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  //Passwort Eingabefeld
-                  TextFormField(
-                    controller: _passwortController,
-                    obscureText: _obscureText,
-                    decoration: InputDecoration(
-                      labelText: 'Passwort',
-                      hintText: 'Bitte geben Sie Ihr Passwort ein',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureText
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureText = !_obscureText;
-                          });
-                        },
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Bitte geben Sie Ihr Passwort ein';
-                      }
-                      if (value.length < 8) {
-                        return 'Das Passwort muss mindestens 8 Zeichen lang sein';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  // Login-Button
-                  ElevatedButton(
-                    onPressed: _login,
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.blue,
-                      padding: EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 32,
-                      ),
-                      textStyle: TextStyle(fontSize: 18),
-                    ),
-                    child: const Text('Anmelden'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+      appBar: AppBar(title: const Text('Anmeldung')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: _buildLoginForm(),
       ),
     );
   }

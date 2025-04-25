@@ -1,0 +1,40 @@
+class ChecklistModel {
+  final String id;
+  final String name;
+  final int typeId;
+  final String typename;
+  final String owner;
+  final String appgroupId;
+  final String appgroupname;
+  final String checklistcategoryId;
+  final String checklistcategoryName;
+  final bool isfavorite;
+
+  ChecklistModel({
+    required this.id,
+    required this.name,
+    required this.typeId,
+    required this.typename,
+    required this.owner,
+    required this.appgroupId,
+    required this.appgroupname,
+    required this.checklistcategoryId,
+    required this.checklistcategoryName,
+    required this.isfavorite,
+  });
+
+  factory ChecklistModel.fromJson(Map<String, dynamic> json) {
+    return ChecklistModel(
+      id: json['id'].toString(),
+      name: json['name'] ?? '',
+      typeId: json['typeId'] ?? 0,
+      typename: json['typename'] ?? '',
+      owner: json['owner'] ?? '',
+      appgroupId: json['appgroupId'].toString(),
+      appgroupname: json['appgroupname'] ?? '',
+      checklistcategoryId: json['checklistcategoryId'].toString(),
+      checklistcategoryName: json['checklistcategoryName'] ?? '',
+      isfavorite: json['isfavorite'] ?? false,
+    );
+  }
+}

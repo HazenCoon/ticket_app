@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:test1/core/routing/app_routes.dart';
+import 'package:test1/features/presentation/theme/app_theme.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
-import 'features/presentation/screens/dashboard_screen.dart';
 import 'features/presentation/screens/ticket_screen.dart';
 
 class MyApp extends StatelessWidget {
@@ -9,14 +10,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Anmeldesystem',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      initialRoute: '/login',
+      title: 'Ticket App',
+      theme: appTheme,
+
+      // Statische Routen
+      initialRoute: AppRoutes.login,
       routes: {
-        '/login': (context) => const LoginScreen(),
-        '/dashboard': (context) => const DashboardScreen(),
-        '/tickets': (context) => const TicketGrid(),
+        AppRoutes.login: (context) => const LoginScreen(),
+        AppRoutes.tickets: (context) => const TicketGrid(),
       },
+
+      // Dynamische Routen
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }
