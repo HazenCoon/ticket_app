@@ -2,7 +2,7 @@ class ChecklistModel {
   final String id;
   final String name;
   final int typeId;
-  final String typename;
+  final String typeName;
   final String owner;
   final String appgroupId;
   final String appgroupname;
@@ -14,7 +14,7 @@ class ChecklistModel {
     required this.id,
     required this.name,
     required this.typeId,
-    required this.typename,
+    required this.typeName,
     required this.owner,
     required this.appgroupId,
     required this.appgroupname,
@@ -29,9 +29,9 @@ class ChecklistModel {
       id: json['id']?.toString() ?? '',
       name: json['name'] ?? '',
       typeId: json['typeId'] is int ? json['typeId'] : 0,
-      typename: json['typename'] ?? '',
+      typeName: json['typeName'] ?? '',
       owner: json['owner'] ?? '',
-      appgroupId: json['appgroupId'].toString() ?? '',
+      appgroupId: json['appgroupId']?.toString() ?? '',
       appgroupname: json['appgroupname'] ?? '',
       checklistcategoryId: json['checklistcategoryId']?.toString() ?? '',
       checklistcategoryName: json['checklistcategoryName'] ?? '',

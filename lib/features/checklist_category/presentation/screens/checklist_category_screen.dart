@@ -20,7 +20,6 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   List<ChecklistCategoryModel> categoryList = [];
   String? expandedCategoryId;
   late ChecklistCategoryService _service;
-
   List<PlutoColumn> _columns = [];
   List<PlutoRow> _rows = [];
   bool _isLoading = true; // Ladezustand
@@ -35,7 +34,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   void _setupColumns() {
     _columns = [
       PlutoColumn(
-        title: 'ID',
+        title: 'Id',
         field: 'id',
         type: PlutoColumnType.text(),
         enableSorting: true,
@@ -47,8 +46,50 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
         enableSorting: true,
       ),
       PlutoColumn(
-        title: 'Appgroup',
+        title: 'AppgroupId',
+        field: 'appgroupId',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'AppgroupName',
         field: 'appgroupName',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Typ-Id',
+        field: 'typeId',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Typename',
+        field: 'typeName',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Owner',
+        field: 'owner',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Kategorie-Id',
+        field: 'checklistcategoryId',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Kategorie-Name',
+        field: 'checklistcategoryName',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Favorit',
+        field: 'isfavorite',
         type: PlutoColumnType.text(),
         enableSorting: true,
       ),
@@ -69,44 +110,58 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
       );
 
       // Konvertierung der Kategorien in PlutoRows
-      setState(() {
-        _rows = [];
-        for (var category in categories) {
-          // Kategorie Zeile
-          _rows.add(
-            PlutoRow(
-              cells: {
-                'id': PlutoCell(value: category.id),
-                'name': PlutoCell(value: category.name),
-                'appgroupName': PlutoCell(value: category.appgroupName),
-              },
-            ),
-          );
+      for (var category in categories) {
+        // Kategorie Zeile
+        _rows.add(
+          PlutoRow(
+            cells: {
+              'id': PlutoCell(value: category.id),
+              'name': PlutoCell(value: category.name),
+              'appgroupId': PlutoCell(value: category.appgroupId),
+              'appgroupName': PlutoCell(value: category.appgroupName),
+              'typeId': PlutoCell(value: ''),
+              'typeName': PlutoCell(value: ''),
+              'owner': PlutoCell(value: ''),
+              'checklistcategoryId': PlutoCell(value: ''),
+              'checklistcategoryName': PlutoCell(value: ''),
+              'isfavorite': PlutoCell(value: ''),
+            },
+          ),
+        );
 
-          // Checklisten Zeilen unter der Kategorie
-          _rows.addAll(
-            category.checklists.map((checklist) {
-              return PlutoRow(
-                cells: {
-                  'id': PlutoCell(value: checklist.id),
-                  'name': PlutoCell(value: checklist.name),
-                  'typeId': PlutoCell(value: checklist.typeId.toString()),
-                  'typename': PlutoCell(value: checklist.typename),
-                  'owner': PlutoCell(value: checklist.owner),
-                  'isfavorite': PlutoCell(
-                    value: checklist.isfavorite.toString()),
-                },
-              );
-            }).toList() ?? [],
-          );
-        }
+        // Checklisten Zeilen unter der Kategorie
+        _rows.addAll(
+          (category.checklists.map((checklist) {
+            return PlutoRow(
+              cells: {
+                'id': PlutoCell(value: checklist.id),
+                'name': PlutoCell(value: checklist.name),
+                'appgroupId': PlutoCell(value: checklist.appgroupId),
+                'appgroupName': PlutoCell(value: checklist.appgroupname),
+                'typeId': PlutoCell(value: checklist.typeId.toString()),
+                'typeName': PlutoCell(value: checklist.typeName),
+                'owner': PlutoCell(value: checklist.owner),
+                'checklistcategoryId': PlutoCell(
+                  value: checklist.checklistcategoryId,
+                ),
+                'checklistcategoryName': PlutoCell(
+                  value: checklist.checklistcategoryName,
+                ),
+                'isfavorite': PlutoCell(
+                  value: checklist.isfavorite ? 'Ja' : 'Nein',
+                ),
+              },
+            );
+          })),
+        );
+      }
+
+      setState(() {
         _isLoading = false;
       });
     } catch (e) {
       debugPrint('Fehler beim Laden der Kategorien: $e');
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
@@ -121,19 +176,20 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                 columns: _columns,
                 rows: _rows,
                 mode: PlutoGridMode.normal,
+                configuration: const PlutoGridConfiguration(),
                 // Wenn Zeile ausgewählt wird, öffnen/schließen
                 onSelected: (PlutoGridOnSelectedEvent event) {
                   // Erweitert die Checkliste, wenn Zeile der Kategorie ausgewählt wird
                   setState(() {
                     final row = event.row;
                     if (row != null) {
-                      final categoryId = event.row?.cells['id']?.value;
-                      if (expandedCategoryId == categoryId) {
+                      final categoryId = row.cells['id']?.value;
+                      setState(() {
                         expandedCategoryId =
-                            null; // Wenn schon offen, wieder schließen
-                      } else {
-                        expandedCategoryId = categoryId; // Sonst neu öffnen
-                      }
+                            (expandedCategoryId == categoryId)
+                                ? null
+                                : categoryId;
+                      });
                     }
                   });
                 },
