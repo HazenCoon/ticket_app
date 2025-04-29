@@ -23,18 +23,19 @@ class ChecklistModel {
     required this.isfavorite,
   });
 
+  // Factory Methode zur Umwandlung von JSON in ChecklistModel
   factory ChecklistModel.fromJson(Map<String, dynamic> json) {
     return ChecklistModel(
-      id: json['id'].toString(),
+      id: json['id']?.toString() ?? '',
       name: json['name'] ?? '',
-      typeId: json['typeId'] ?? 0,
+      typeId: json['typeId'] is int ? json['typeId'] : 0,
       typename: json['typename'] ?? '',
       owner: json['owner'] ?? '',
-      appgroupId: json['appgroupId'].toString(),
+      appgroupId: json['appgroupId'].toString() ?? '',
       appgroupname: json['appgroupname'] ?? '',
-      checklistcategoryId: json['checklistcategoryId'].toString(),
+      checklistcategoryId: json['checklistcategoryId']?.toString() ?? '',
       checklistcategoryName: json['checklistcategoryName'] ?? '',
-      isfavorite: json['isfavorite'] ?? false,
+      isfavorite: json['isfavorite'] == true,
     );
   }
 }
