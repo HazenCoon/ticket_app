@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test1/core/errors/app_exception.dart';
+import 'package:test1/core/errors/custom_exceptions.dart';
 import 'package:test1/core/network/api_client.dart';
 import 'package:test1/features/checklist_category/data/services/checklist_category_service.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -21,7 +23,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   String? expandedCategoryId;
   late ChecklistCategoryService _service;
   List<PlutoColumn> _columns = [];
-  List<PlutoRow> _rows = [];
+  final List<PlutoRow> _rows = [];
   bool _isLoading = true; // Ladezustand
 
   @override
@@ -100,7 +102,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   Future<void> _initializeData() async {
     try {
       if (widget.token.isEmpty) {
-        throw Exception('Token ist leer');
+        throw BadRequestException('Token ist leer');
       }
 
       final dio = await ApiClient.getClient(token: widget.token);
@@ -160,7 +162,9 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      debugPrint('Fehler beim Laden der Kategorien: $e');
+      String errorMessage =
+          e is AppException ? e.message : 'Unbekannter Fehler';
+      debugPrint('Fehler beim Laden der Kategorien: $errorMessage');
       setState(() => _isLoading = false);
     }
   }
