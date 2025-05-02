@@ -31,7 +31,7 @@ class ChecklistModel {
       typeId: json['typeId'] is int ? json['typeId'] : 0,
       typename: json['typename'] ?? '',
       owner: json['owner'] ?? '',
-      appgroupId: json['appgroupId'].toString() ?? '',
+      appgroupId: json['appgroupId'].toString(),
       appgroupname: json['appgroupname'] ?? '',
       checklistcategoryId: json['checklistcategoryId']?.toString() ?? '',
       checklistcategoryName: json['checklistcategoryName'] ?? '',

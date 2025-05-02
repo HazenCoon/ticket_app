@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test1/core/network/api_client.dart';
+import 'package:test1/core/routing/app_routes.dart';
 import 'package:test1/features/checklist_category/data/services/checklist_category_service.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:test1/features/checklist_category/domain/models/checklist_category_model.dart';
@@ -97,7 +98,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                     value: checklist.isfavorite.toString()),
                 },
               );
-            }).toList() ?? [],
+            }).toList(),
           );
         }
         _isLoading = false;
@@ -123,21 +124,27 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                 mode: PlutoGridMode.normal,
                 // Wenn Zeile ausgewählt wird, öffnen/schließen
                 onSelected: (PlutoGridOnSelectedEvent event) {
-                  // Erweitert die Checkliste, wenn Zeile der Kategorie ausgewählt wird
-                  setState(() {
                     final row = event.row;
                     if (row != null) {
-                      final categoryId = event.row?.cells['id']?.value;
-                      if (expandedCategoryId == categoryId) {
-                        expandedCategoryId =
-                            null; // Wenn schon offen, wieder schließen
-                      } else {
-                        expandedCategoryId = categoryId; // Sonst neu öffnen
+                      final typeId = row.cells['typeId']?.value;
+                      final checklistcategoryId = row.cells['checklistcategoryId']?.value;
+
+                      final isCategoryRow = (typeId == '' || typeId == null) && (checklistcategoryId == '' || checklistcategoryId == null);
+
+                      if (isCategoryRow) {['id']?.value;
+                        setState(() {
+                          expandedCategoryId = (expandedCategoryId == checklistcategoryId) ? null : checklistcategoryId;
+                        });
+                        Navigator.pushNamed(
+    context,
+    AppRoutes.ChecklistScreen,
+    arguments: checklistcategoryId,
+    );
                       }
                     }
-                  });
-                },
-              ),
+                  },))
+    );
+                    ),
     );
   }
 }

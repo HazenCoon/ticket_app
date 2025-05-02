@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       routes: {
         AppRoutes.login: (context) => const LoginScreen(),
         AppRoutes.tickets: (context) => const TicketGrid(),
+        AppRoutes.checklist: (context) => const ChecklistScreen(),
       },
 
       // Dynamische Routen
