@@ -1,6 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:test1/core/errors/app_exception.dart';
-import 'package:test1/core/errors/custom_exceptions.dart';
+import 'package:test1/core/errors/dio_error_handler.dart';
 import 'package:test1/core/network/api_client.dart';
 import 'package:test1/features/checklist_category/data/services/checklist_category_service.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -102,7 +103,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   Future<void> _initializeData() async {
     try {
       if (widget.token.isEmpty) {
-        throw BadRequestException('Token ist leer');
+        throw handleGeneralError('Token ist leer');
       }
 
       final dio = await ApiClient.getClient(token: widget.token);
@@ -161,10 +162,19 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
       setState(() {
         _isLoading = false;
       });
+    } on DioException catch (e) {
+      final message = handleDioError(e);
+      debugPrint('Dio-Fehler: $message');
+      setState(() => _isLoading = false);
     } catch (e) {
-      String errorMessage =
-          e is AppException ? e.message : 'Unbekannter Fehler';
-      debugPrint('Fehler beim Laden der Kategorien: $errorMessage');
+      final message =
+          e is AppException
+              ? e.message
+              : handleGeneralError('Unbekannter Fehler').toString();
+      debugPrint(
+        ''
+        'Allgemeiner Fehler: $message',
+      );
       setState(() => _isLoading = false);
     }
   }
