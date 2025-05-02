@@ -26,15 +26,10 @@ class ChecklistCategoryModel {
       // Sicherstellen, dass checklists eine Liste ist
       checklists:
           (json['checklists'] as List?)
-              ?.map((checklistJson) {
-                return checklistJson != null
-                    ? ChecklistModel.fromJson(checklistJson)
-                    : null;
-              })
-              .where((checklist) => checklist != null)
-              .cast<ChecklistModel>()
+              ?.where((e) => e != null)
+              .map((e) => ChecklistModel.fromJson(e))
               .toList() ??
-          [],
+        [],
     );
   }
 }

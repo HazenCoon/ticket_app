@@ -1,20 +1,22 @@
 import 'package:dio/dio.dart';
+import 'package:test1/core/errors/custom_exceptions.dart';
+import 'package:test1/core/errors/dio_error_handler.dart';
 import 'package:test1/features/checklist_category/domain/models/checklist_category_model.dart';
 import '../../../../core/network/api_config.dart' as api_config;
 
 // Klasse ChecklistCategory
 class ChecklistCategoryService {
-  final Dio dio;
+  final Dio _dio;
 
   // Konstruktor um Dio zu initialisieren
-  ChecklistCategoryService(this.dio);
+  ChecklistCategoryService(this._dio);
 
   // Methode zum Abrufen der Checklist-Kategorien und deren Checklisten
   Future<List<ChecklistCategoryModel>> fetchChecklistCategories({
     required String token,
   }) async {
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         '${api_config.baseUrl}${api_config.checklistCategoryEndpoint}',
         options: Options(
           headers: {
@@ -33,19 +35,21 @@ class ChecklistCategoryService {
               .map((json) => ChecklistCategoryModel.fromJson(json))
               .toList();
         } else {
-          throw Exception('Die Antwort ist nicht im erwarteten Listenformat');
+          throw FetchDataException(
+            'Die Antwort ist nicht im erwarteten Listenformat',
+          );
         }
       }
       // Fehlerbehandlung
       else {
-        throw Exception(
+        throw FetchDataException(
           'Fehler beim Abrufen der Kategorien: ${response.statusCode}',
         );
       }
     } on DioException catch (e) {
-      throw Exception('Fehler beim Abrufen der Kategorien: ${e.message}');
+      throw handleDioError(e);
     } catch (e) {
-      throw Exception('Unbekannter Fehler: $e');
+      throw FetchDataException('Unbekannter Fehler: $e');
     }
   }
 }
