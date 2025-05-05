@@ -38,9 +38,14 @@ class MyAppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case checklist:
-        final categoryId = settings.arguments as String;
+        final args = settings.arguments as Map<String, dynamic>;
+        final categoryId = args['categoryId'] as String;
+        final checklists = args['checklists'] as List<dynamic>;
         return MaterialPageRoute(
-          builder: (context) => ChecklistScreen(categoryId: categoryId),
+          builder: (context) => ChecklistScreen(
+              categoryId: categoryId,
+            checklists: checklists,
+          ),
         );
       case dashboard:
         final token = settings.arguments as String;

@@ -111,7 +111,10 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                     Navigator.pushNamed(
                       context,
                       MyAppRoutes.checklist,
-                      arguments: categoryId,
+                      arguments: {
+                        'categoryId': categoryId,
+                        'checklists': categoryList,
+                      }
                     );
                   }
                 },
