@@ -71,36 +71,17 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
 
       // Konvertierung der Kategorien in PlutoRows
       setState(() {
-        _rows = [];
-        for (var category in categories) {
-          // Kategorie Zeile
-          _rows.add(
-            PlutoRow(
-              cells: {
-                'id': PlutoCell(value: category.id),
-                'name': PlutoCell(value: category.name),
-                'appgroupName': PlutoCell(value: category.appgroupName),
-              },
-            ),
-          );
-
-          // Checklisten Zeilen unter der Kategorie
-          _rows.addAll(
-            category.checklists.map((checklist) {
+        _rows =
+            categories.map((category) {
               return PlutoRow(
                 cells: {
-                  'id': PlutoCell(value: checklist.id),
-                  'name': PlutoCell(value: checklist.name),
-                  'typeId': PlutoCell(value: checklist.typeId.toString()),
-                  'typename': PlutoCell(value: checklist.typename),
-                  'owner': PlutoCell(value: checklist.owner),
-                  'isfavorite': PlutoCell(
-                    value: checklist.isfavorite.toString()),
+                  'id': PlutoCell(value: category.id),
+                  'name': PlutoCell(value: category.name),
+                  'appgroupName': PlutoCell(value: category.appgroupName),
                 },
               );
-            }).toList(),
-          );
-        }
+            }).toList();
+
         _isLoading = false;
       });
     } catch (e) {
@@ -114,7 +95,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: const Text('Checklist Kategorien'))),
+      appBar: AppBar(title: const Center(child: Text('Checklist Kategorien'))),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -122,29 +103,19 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                 columns: _columns,
                 rows: _rows,
                 mode: PlutoGridMode.normal,
-                // Wenn Zeile ausgewählt wird, öffnen/schließen
+                // Navigation bei Klick auf Kategorie-Zeile
                 onSelected: (PlutoGridOnSelectedEvent event) {
-                    final row = event.row;
-                    if (row != null) {
-                      final typeId = row.cells['typeId']?.value;
-                      final checklistcategoryId = row.cells['checklistcategoryId']?.value;
-
-                      final isCategoryRow = (typeId == '' || typeId == null) && (checklistcategoryId == '' || checklistcategoryId == null);
-
-                      if (isCategoryRow) {['id']?.value;
-                        setState(() {
-                          expandedCategoryId = (expandedCategoryId == checklistcategoryId) ? null : checklistcategoryId;
-                        });
-                        Navigator.pushNamed(
-    context,
-    AppRoutes.ChecklistScreen,
-    arguments: checklistcategoryId,
-    );
-                      }
-                    }
-                  },))
-    );
-                    ),
+                  final row = event.row;
+                  if (row != null) {
+                    final categoryId = row.cells['id']?.value;
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.checklist,
+                      arguments: categoryId,
+                    );
+                  }
+                },
+              ),
     );
   }
 }
