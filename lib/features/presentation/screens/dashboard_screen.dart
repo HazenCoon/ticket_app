@@ -42,7 +42,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             // Button für die Navigation zur TicketGrid
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.tickets);
+                Navigator.pushNamed(context, MyAppRoutes.tickets);
               },
               child: const Text('Zur Ticket-Tabelle'),
             ),
@@ -60,7 +60,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 if (token != null) {
                   Navigator.pushNamed(
                     context,
-                    AppRoutes.checklistCategory,
+                    MyAppRoutes.checklistCategory,
                     arguments: token,
                   );
                 } else {

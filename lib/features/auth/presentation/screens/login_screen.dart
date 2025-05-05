@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Routing zum Dashboard
       if (mounted) {
-        Navigator.pushNamed(context, AppRoutes.dashboard, arguments: token);
+        Navigator.pushReplacementNamed(context, MyAppRoutes.dashboard, arguments: token);
       }
 
       // Fehler wird in _error gespeichert

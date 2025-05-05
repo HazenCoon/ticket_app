@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:test1/core/routing/app_routes.dart';
+import 'package:test1/features/checklist_category/presentation/screens/checklist_category_screen.dart';
 import 'package:test1/features/presentation/theme/app_theme.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
+import 'features/checklist/presentation/checklist_screen.dart';
+import 'features/presentation/screens/dashboard_screen.dart';
 import 'features/presentation/screens/ticket_screen.dart';
 
 class MyApp extends StatelessWidget {
@@ -14,15 +16,48 @@ class MyApp extends StatelessWidget {
       theme: appTheme,
 
       // Statische Routen
-      initialRoute: AppRoutes.login,
+      initialRoute: MyAppRoutes.login,
       routes: {
-        AppRoutes.login: (context) => const LoginScreen(),
-        AppRoutes.tickets: (context) => const TicketGrid(),
-        AppRoutes.checklist: (context) => const ChecklistScreen(),
+        MyAppRoutes.login: (context) => const LoginScreen(),
+        MyAppRoutes.tickets: (context) => const TicketGrid(),
       },
 
       // Dynamische Routen
-      onGenerateRoute: AppRoutes.generateRoute,
+      onGenerateRoute: MyAppRoutes.generateRoute,
     );
+  }
+}
+
+class MyAppRoutes {
+  static const String checklist = '/checklist';
+  static const String dashboard = '/dashboard';
+  static const String checklistCategory = '/checklistCategory';
+  static const String login = '/login';
+  static const String tickets = '/tickets';
+
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case checklist:
+        final categoryId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (context) => ChecklistScreen(categoryId: categoryId),
+        );
+      case dashboard:
+        final token = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (context) => DashboardScreen(accessToken: token),
+        );
+      case checklistCategory:
+        final token = settings.arguments;
+        if (token is String) {
+          return MaterialPageRoute(
+            builder: (context) => ChecklistCategoryScreen(token: token),
+          );
+        } else {
+          return MaterialPageRoute(builder: (context) => const LoginScreen());
+        }
+      default:
+        return MaterialPageRoute(builder: (context) => const LoginScreen());
+    }
   }
 }
