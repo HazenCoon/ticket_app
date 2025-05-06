@@ -153,6 +153,18 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                     );
                   }
                 },
+                onSelected: (PlutoGridOnSelectedEvent event) {
+                  setState(() {
+                    final row = event.row;
+                    if (row != null) {
+                      final categoryId = row.cells['id']?.value;
+                      expandedCategoryId =
+                          (expandedCategoryId == categoryId)
+                              ? null
+                              : categoryId;
+                    }
+                  });
+                },
               ),
     );
   }
