@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test1/features/checklist_category/domain/models/checklist_model.dart';
 import 'package:test1/features/checklist_category/presentation/screens/checklist_category_screen.dart';
 import 'package:test1/features/presentation/theme/app_theme.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
@@ -40,7 +41,7 @@ class MyAppRoutes {
       case checklist:
         final args = settings.arguments as Map<String, dynamic>;
         final categoryId = args['categoryId'] as String;
-        final checklists = args['checklists'] as List<dynamic>;
+        final checklists = (args['checklists'] as List).cast<ChecklistModel>();
         return MaterialPageRoute(
           builder: (context) => ChecklistScreen(
               categoryId: categoryId,

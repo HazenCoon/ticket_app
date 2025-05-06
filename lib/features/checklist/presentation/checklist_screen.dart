@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
+import 'package:test1/features/checklist_category/domain/models/checklist_model.dart';
 
 class ChecklistScreen extends StatefulWidget {
   final String categoryId;
-  final List<dynamic> checklists;
+  final List<ChecklistModel> checklists;
 
   const ChecklistScreen({
     super.key,
@@ -34,24 +35,28 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         title: 'ID',
         field: 'id',
         type: PlutoColumnType.text(),
+        enableEditingMode: false,
         enableSorting: true,
       ),
       PlutoColumn(
         title: 'Name',
         field: 'name',
         type: PlutoColumnType.text(),
+        enableEditingMode: false,
         enableSorting: true,
       ),
       PlutoColumn(
         title: 'Typ',
         field: 'typename',
         type: PlutoColumnType.text(),
+        enableEditingMode: false,
         enableSorting: true,
       ),
       PlutoColumn(
         title: 'Favorit',
         field: 'isfavorite',
         type: PlutoColumnType.text(),
+        enableEditingMode: false,
         enableSorting: true,
       ),
     ];
@@ -61,13 +66,14 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
   Future<void> _loadChecklists() async {
     final rows =
         widget.checklists.map((checklist) {
+          final item =checklist;
           return PlutoRow(
             cells: {
-              'id': PlutoCell(value: checklist['id']),
-              'name': PlutoCell(value: checklist['name']),
-              'typename': PlutoCell(value: checklist['typename']),
+              'id': PlutoCell(value: item.id),
+              'name': PlutoCell(value: item.name),
+              'typename': PlutoCell(value: item.typename),
               'isfavorite': PlutoCell(
-                value: checklist['isfavorite'] ? 'Ja' : 'Nein',
+                value: item.isfavorite ? 'Nein' : 'Ja',
               ),
             },
           );

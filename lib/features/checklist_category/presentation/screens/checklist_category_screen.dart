@@ -39,18 +39,21 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
         title: 'ID',
         field: 'id',
         type: PlutoColumnType.text(),
+        enableEditingMode: false,
         enableSorting: true,
       ),
       PlutoColumn(
         title: 'Name',
         field: 'name',
         type: PlutoColumnType.text(),
+        enableEditingMode: false,
         enableSorting: true,
       ),
       PlutoColumn(
         title: 'Appgroup',
         field: 'appgroupName',
         type: PlutoColumnType.text(),
+        enableEditingMode: false,
         enableSorting: true,
       ),
     ];
@@ -65,14 +68,14 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
 
       final dio = await ApiClient.getClient(token: widget.token);
       _service = ChecklistCategoryService(dio);
-      final categories = await _service.fetchChecklistCategories(
+      categoryList = await _service.fetchChecklistCategories(
         token: widget.token,
       );
 
       // Konvertierung der Kategorien in PlutoRows
       setState(() {
         _rows =
-            categories.map((category) {
+            categoryList.map((category) {
               return PlutoRow(
                 cells: {
                   'id': PlutoCell(value: category.id),
@@ -104,19 +107,27 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                 rows: _rows,
                 mode: PlutoGridMode.normal,
                 // Navigation bei Klick auf Kategorie-Zeile
-                onSelected: (PlutoGridOnSelectedEvent event) {
-                  final row = event.row;
-                  if (row != null) {
-                    final categoryId = row.cells['id']?.value;
-                    Navigator.pushNamed(
-                      context,
-                      MyAppRoutes.checklist,
-                      arguments: {
-                        'categoryId': categoryId,
-                        'checklists': categoryList,
-                      }
-                    );
-                  }
+                onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event) {
+                  final categoryId = event.row.cells['id']!.value;
+                  final selectedCategory = categoryList.firstWhere(
+                    (cat) => cat.id == categoryId,
+                    orElse:
+                        () => ChecklistCategoryModel(
+                          id: '',
+                          name: '',
+                          appgroupId: '',
+                          appgroupName: '',
+                          checklists: [],
+                        ),
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    MyAppRoutes.checklist,
+                    arguments: {
+                      'categoryId': categoryId,
+                      'checklists': selectedCategory.checklists,
+                    },
+                  );
                 },
               ),
     );
