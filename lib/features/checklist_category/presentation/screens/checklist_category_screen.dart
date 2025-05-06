@@ -23,7 +23,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   late ChecklistCategoryService _service;
 
   List<PlutoColumn> _columns = [];
-  List<PlutoRow> _rows = [];
+  final List<PlutoRow> _rows = [];
   bool _isLoading = true; // Ladezustand
 
   @override
@@ -56,6 +56,13 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
         enableEditingMode: false,
         enableSorting: true,
       ),
+      PlutoColumn(
+        title: 'Typ',
+        field: 'typeName',
+        type: PlutoColumnType.text(),
+        enableEditingMode: false,
+        enableSorting: true,
+      ),
     ];
   }
 
@@ -74,24 +81,37 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
 
       // Konvertierung der Kategorien in PlutoRows
       setState(() {
-        _rows =
-            categoryList.map((category) {
+        _rows.clear();
+        for (var category in categoryList) {
+          _rows.add(
+            PlutoRow(
+              cells: {
+                'id': PlutoCell(value: category.id),
+                'name': PlutoCell(value: category.name),
+                'appgroupName': PlutoCell(value: category.appgroupName),
+                'typeName': PlutoCell(value: 'Kategorie'),
+              },
+            ),
+          );
+
+          _rows.addAll(
+            category.checklists.map((checklist) {
               return PlutoRow(
                 cells: {
-                  'id': PlutoCell(value: category.id),
-                  'name': PlutoCell(value: category.name),
-                  'appgroupName': PlutoCell(value: category.appgroupName),
+                  'id': PlutoCell(value: checklist.id),
+                  'name': PlutoCell(value: checklist.name),
+                  'appgroupName': PlutoCell(value: checklist.appgroupname),
+                  'typeName': PlutoCell(value: checklist.typename),
                 },
               );
-            }).toList();
-
+            }),
+          );
+        }
         _isLoading = false;
       });
     } catch (e) {
       debugPrint('Fehler beim Laden der Kategorien: $e');
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
@@ -108,26 +128,30 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                 mode: PlutoGridMode.normal,
                 // Navigation bei Klick auf Kategorie-Zeile
                 onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event) {
-                  final categoryId = event.row.cells['id']!.value;
-                  final selectedCategory = categoryList.firstWhere(
-                    (cat) => cat.id == categoryId,
-                    orElse:
-                        () => ChecklistCategoryModel(
-                          id: '',
-                          name: '',
-                          appgroupId: '',
-                          appgroupName: '',
-                          checklists: [],
-                        ),
-                  );
-                  Navigator.pushNamed(
-                    context,
-                    MyAppRoutes.checklist,
-                    arguments: {
-                      'categoryId': categoryId,
-                      'checklists': selectedCategory.checklists,
-                    },
-                  );
+                  final row = event.row;
+                  final rowType = row.cells['typeName']?.value;
+                  if (rowType == 'Kategorie') {
+                    final categoryId = event.row.cells['id']!.value;
+                    final selectedCategory = categoryList.firstWhere(
+                      (cat) => cat.id == categoryId,
+                      orElse:
+                          () => ChecklistCategoryModel(
+                            id: '',
+                            name: '',
+                            appgroupId: '',
+                            appgroupName: '',
+                            checklists: [],
+                          ),
+                    );
+                    Navigator.pushNamed(
+                      context,
+                      MyAppRoutes.checklist,
+                      arguments: {
+                        'categoryId': categoryId,
+                        'checklists': selectedCategory.checklists,
+                      },
+                    );
+                  }
                 },
               ),
     );
