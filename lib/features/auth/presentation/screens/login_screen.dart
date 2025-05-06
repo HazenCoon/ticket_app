@@ -1,5 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test1/core/errors/app_exception.dart';
+import 'package:test1/core/errors/dio_error_handler.dart';
 import 'package:test1/core/network/api_client.dart';
 import 'package:test1/core/routing/app_routes.dart';
 
@@ -54,19 +57,16 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       // Fehler wird in _error gespeichert
+    } on DioException catch (e) {
+      final exception = handleDioError(e);
+      setState(() {
+        _error = exception is AppException
+            ? exception.message : 'Ein unbekannter Fehler ist aufgetreten.';
+      });
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          final errorMsg = e.toString().toLowerCase();
-          if (errorMsg.contains('401') || errorMsg.contains('unauthorized')) {
-            _error = 'Benutzername oder Passwort ist falsch.';
-          } else if (errorMsg.contains('timeout')) {
-            _error = 'Zeitüberschreitung bei der Verbindung.';
-          } else {
-            _error = 'Ein Fehler ist aufgetreten: ${e.toString()}';
-          }
-        });
-      }
+      setState(() {
+        _error = 'Ein unerwarteter Fehler ist aufgetreten.';
+      });
 
       // Ladeanimation wird auf false gesetzt
     } finally {

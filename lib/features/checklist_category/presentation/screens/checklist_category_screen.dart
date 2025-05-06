@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:test1/core/errors/app_exception.dart';
+import 'package:test1/core/errors/dio_error_handler.dart';
 import 'package:test1/core/network/api_client.dart';
 import 'package:test1/features/checklist_category/data/services/checklist_category_service.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -21,7 +24,6 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   List<ChecklistCategoryModel> categoryList = [];
   String? expandedCategoryId;
   late ChecklistCategoryService _service;
-
   List<PlutoColumn> _columns = [];
   final List<PlutoRow> _rows = [];
   bool _isLoading = true; // Ladezustand
@@ -36,7 +38,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   void _setupColumns() {
     _columns = [
       PlutoColumn(
-        title: 'ID',
+        title: 'Id',
         field: 'id',
         type: PlutoColumnType.text(),
         enableEditingMode: false,
@@ -50,7 +52,13 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
         enableSorting: true,
       ),
       PlutoColumn(
-        title: 'Appgroup',
+        title: 'AppgroupId',
+        field: 'appgroupId',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'AppgroupName',
         field: 'appgroupName',
         type: PlutoColumnType.text(),
         enableEditingMode: false,
@@ -63,6 +71,42 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
         enableEditingMode: false,
         enableSorting: true,
       ),
+      PlutoColumn(
+        title: 'Typ-Id',
+        field: 'typeId',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Typename',
+        field: 'typeName',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Owner',
+        field: 'owner',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Kategorie-Id',
+        field: 'checklistcategoryId',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Kategorie-Name',
+        field: 'checklistcategoryName',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Favorit',
+        field: 'isfavorite',
+        type: PlutoColumnType.text(),
+        enableSorting: true,
+      ),
     ];
   }
 
@@ -70,7 +114,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   Future<void> _initializeData() async {
     try {
       if (widget.token.isEmpty) {
-        throw Exception('Token ist leer');
+        throw handleGeneralError('Token ist leer');
       }
 
       final dio = await ApiClient.getClient(token: widget.token);
@@ -78,8 +122,6 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
       categoryList = await _service.fetchChecklistCategories(
         token: widget.token,
       );
-
-      // Konvertierung der Kategorien in PlutoRows
       setState(() {
         _rows.clear();
         for (var category in categoryList) {
@@ -90,10 +132,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                 'name': PlutoCell(value: category.name),
                 'appgroupName': PlutoCell(value: category.appgroupName),
                 'typeName': PlutoCell(value: 'Kategorie'),
-              },
-            ),
-          );
-
+              },),);
           _rows.addAll(
             category.checklists.map((checklist) {
               return PlutoRow(
@@ -111,6 +150,21 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
       });
     } catch (e) {
       debugPrint('Fehler beim Laden der Kategorien: $e');
+      setState(() {
+        _isLoading = false;
+    } on DioException catch (e) {
+      final message = handleDioError(e);
+      debugPrint('Dio-Fehler: $message');
+      setState(() => _isLoading = false);
+    } catch (e) {
+      final message =
+          e is AppException
+              ? e.message
+              : handleGeneralError('Unbekannter Fehler').toString();
+      debugPrint(
+        ''
+        'Allgemeiner Fehler: $message',
+      );
       setState(() => _isLoading = false);
     }
   }
@@ -153,6 +207,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                     );
                   }
                 },
+
                 onSelected: (PlutoGridOnSelectedEvent event) {
                   setState(() {
                     final row = event.row;
@@ -162,6 +217,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                           (expandedCategoryId == categoryId)
                               ? null
                               : categoryId;
+
                     }
                   });
                 },
