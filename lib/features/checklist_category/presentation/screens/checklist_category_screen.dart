@@ -6,6 +6,7 @@ import 'package:test1/core/network/api_client.dart';
 import 'package:test1/features/checklist_category/data/services/checklist_category_service.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:test1/features/checklist_category/domain/models/checklist_category_model.dart';
+import 'package:test1/my_app.dart';
 
 // Klasse ChecklistCategoryScreen
 class ChecklistCategoryScreen extends StatefulWidget {
@@ -40,12 +41,14 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
         title: 'Id',
         field: 'id',
         type: PlutoColumnType.text(),
+        enableEditingMode: false,
         enableSorting: true,
       ),
       PlutoColumn(
         title: 'Name',
         field: 'name',
         type: PlutoColumnType.text(),
+        enableEditingMode: false,
         enableSorting: true,
       ),
       PlutoColumn(
@@ -58,6 +61,14 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
         title: 'AppgroupName',
         field: 'appgroupName',
         type: PlutoColumnType.text(),
+        enableEditingMode: false,
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'Typ',
+        field: 'typeName',
+        type: PlutoColumnType.text(),
+        enableEditingMode: false,
         enableSorting: true,
       ),
       PlutoColumn(
@@ -108,60 +119,39 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
 
       final dio = await ApiClient.getClient(token: widget.token);
       _service = ChecklistCategoryService(dio);
-      final categories = await _service.fetchChecklistCategories(
+      categoryList = await _service.fetchChecklistCategories(
         token: widget.token,
       );
-
-      // Konvertierung der Kategorien in PlutoRows
-      for (var category in categories) {
-        // Kategorie Zeile
-        _rows.add(
-          PlutoRow(
-            cells: {
-              'id': PlutoCell(value: category.id),
-              'name': PlutoCell(value: category.name),
-              'appgroupId': PlutoCell(value: category.appgroupId),
-              'appgroupName': PlutoCell(value: category.appgroupName),
-              'typeId': PlutoCell(value: ''),
-              'typeName': PlutoCell(value: ''),
-              'owner': PlutoCell(value: ''),
-              'checklistcategoryId': PlutoCell(value: ''),
-              'checklistcategoryName': PlutoCell(value: ''),
-              'isfavorite': PlutoCell(value: ''),
-            },
-          ),
-        );
-
-        // Checklisten Zeilen unter der Kategorie
-        _rows.addAll(
-          (category.checklists.map((checklist) {
-            return PlutoRow(
-              cells: {
-                'id': PlutoCell(value: checklist.id),
-                'name': PlutoCell(value: checklist.name),
-                'appgroupId': PlutoCell(value: checklist.appgroupId),
-                'appgroupName': PlutoCell(value: checklist.appgroupname),
-                'typeId': PlutoCell(value: checklist.typeId.toString()),
-                'typeName': PlutoCell(value: checklist.typeName),
-                'owner': PlutoCell(value: checklist.owner),
-                'checklistcategoryId': PlutoCell(
-                  value: checklist.checklistcategoryId,
-                ),
-                'checklistcategoryName': PlutoCell(
-                  value: checklist.checklistcategoryName,
-                ),
-                'isfavorite': PlutoCell(
-                  value: checklist.isfavorite ? 'Ja' : 'Nein',
-                ),
-              },
-            );
-          })),
-        );
-      }
-
       setState(() {
+        _rows.clear();
+        for (var category in categoryList) {
+          _rows.add(
+            PlutoRow(
+              cells: {
+                'id': PlutoCell(value: category.id),
+                'name': PlutoCell(value: category.name),
+                'appgroupName': PlutoCell(value: category.appgroupName),
+                'typeName': PlutoCell(value: 'Kategorie'),
+              },),);
+          _rows.addAll(
+            category.checklists.map((checklist) {
+              return PlutoRow(
+                cells: {
+                  'id': PlutoCell(value: checklist.id),
+                  'name': PlutoCell(value: checklist.name),
+                  'appgroupName': PlutoCell(value: checklist.appgroupname),
+                  'typeName': PlutoCell(value: checklist.typename),
+                },
+              );
+            }),
+          );
+        }
         _isLoading = false;
       });
+    } catch (e) {
+      debugPrint('Fehler beim Laden der Kategorien: $e');
+      setState(() {
+        _isLoading = false;
     } on DioException catch (e) {
       final message = handleDioError(e);
       debugPrint('Dio-Fehler: $message');
@@ -182,7 +172,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: const Text('Checklist Kategorien'))),
+      appBar: AppBar(title: const Center(child: Text('Checklist Kategorien'))),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -190,20 +180,44 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                 columns: _columns,
                 rows: _rows,
                 mode: PlutoGridMode.normal,
-                configuration: const PlutoGridConfiguration(),
-                // Wenn Zeile ausgewählt wird, öffnen/schließen
+                // Navigation bei Klick auf Kategorie-Zeile
+                onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event) {
+                  final row = event.row;
+                  final rowType = row.cells['typeName']?.value;
+                  if (rowType == 'Kategorie') {
+                    final categoryId = event.row.cells['id']!.value;
+                    final selectedCategory = categoryList.firstWhere(
+                      (cat) => cat.id == categoryId,
+                      orElse:
+                          () => ChecklistCategoryModel(
+                            id: '',
+                            name: '',
+                            appgroupId: '',
+                            appgroupName: '',
+                            checklists: [],
+                          ),
+                    );
+                    Navigator.pushNamed(
+                      context,
+                      MyAppRoutes.checklist,
+                      arguments: {
+                        'categoryId': categoryId,
+                        'checklists': selectedCategory.checklists,
+                      },
+                    );
+                  }
+                },
+
                 onSelected: (PlutoGridOnSelectedEvent event) {
-                  // Erweitert die Checkliste, wenn Zeile der Kategorie ausgewählt wird
                   setState(() {
                     final row = event.row;
                     if (row != null) {
                       final categoryId = row.cells['id']?.value;
-                      setState(() {
-                        expandedCategoryId =
-                            (expandedCategoryId == categoryId)
-                                ? null
-                                : categoryId;
-                      });
+                      expandedCategoryId =
+                          (expandedCategoryId == categoryId)
+                              ? null
+                              : categoryId;
+
                     }
                   });
                 },

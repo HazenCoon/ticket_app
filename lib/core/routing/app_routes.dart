@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:test1/features/checklist_category/presentation/screens/checklist_category_screen.dart';
 import 'package:test1/features/presentation/screens/dashboard_screen.dart';
 
-class AppRoutes {
+class MyAppRoutes {
   static const login = '/login';
   static const dashboard = '/dashboard';
   static const tickets = '/tickets';
