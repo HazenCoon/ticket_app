@@ -46,8 +46,50 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         enableSorting: true,
       ),
       PlutoColumn(
+        title: 'typeId',
+        field: 'typeId',
+        type: PlutoColumnType.text(),
+        enableEditingMode: false,
+        enableSorting: true,
+      ),
+      PlutoColumn(
         title: 'Typ',
         field: 'typename',
+        type: PlutoColumnType.text(),
+        enableEditingMode: false,
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'owner',
+        field: 'owner',
+        type: PlutoColumnType.text(),
+        enableEditingMode: false,
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'appgroupId',
+        field: 'appgroupId',
+        type: PlutoColumnType.text(),
+        enableEditingMode: false,
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'appgroupname',
+        field: 'appgroupname',
+        type: PlutoColumnType.text(),
+        enableEditingMode: false,
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'checklistcategoryId',
+        field: 'checklistcategoryId',
+        type: PlutoColumnType.text(),
+        enableEditingMode: false,
+        enableSorting: true,
+      ),
+      PlutoColumn(
+        title: 'checklistcategoryName',
+        field: 'checklistcategoryName',
         type: PlutoColumnType.text(),
         enableEditingMode: false,
         enableSorting: true,
@@ -64,20 +106,32 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
 
   // API-Call für die Checklisten
   Future<void> _loadChecklists() async {
-    final rows =
-        widget.checklists.map((checklist) {
-          final item =checklist;
-          return PlutoRow(
-            cells: {
-              'id': PlutoCell(value: item.id),
-              'name': PlutoCell(value: item.name),
-              'typename': PlutoCell(value: item.typename),
-              'isfavorite': PlutoCell(
-                value: item.isfavorite ? 'Nein' : 'Ja',
-              ),
-            },
-          );
-        }).toList();
+    final List<PlutoRow> rows =
+        widget.checklists.isNotEmpty
+            ? widget.checklists.map((ChecklistModel checklist) {
+              return PlutoRow(
+                cells: {
+                  'id': PlutoCell(value: checklist.id),
+                  'name': PlutoCell(value: checklist.name),
+                  'typeId': PlutoCell(value: checklist.typeId),
+                  'typename': PlutoCell(value: checklist.typeName),
+                  'owner': PlutoCell(value: checklist.owner),
+                  'appgroupId': PlutoCell(value: checklist.appgroupId),
+                  'appgroupname': PlutoCell(value: checklist.appgroupname),
+                  'checklistcategoryId': PlutoCell(
+                    value: checklist.checklistcategoryId,
+                  ),
+                  'checklistcategoryName': PlutoCell(
+                    value: checklist.checklistcategoryName,
+                  ),
+                  'isfavorite': PlutoCell(
+                    value: checklist.isfavorite ? 'Nein' : 'Ja',
+                  ),
+                },
+              );
+            }).toList()
+            : [];
+
     setState(() {
       _rows.clear();
       _rows.addAll(rows);
