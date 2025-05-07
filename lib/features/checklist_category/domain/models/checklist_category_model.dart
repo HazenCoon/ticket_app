@@ -29,7 +29,7 @@ class ChecklistCategoryModel {
               ?.where((e) => e != null)
               .map((e) => ChecklistModel.fromJson(e))
               .toList() ??
-        [],
+          [],
     );
   }
 }

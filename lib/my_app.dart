@@ -39,14 +39,19 @@ class MyAppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case checklist:
-        final args = settings.arguments as Map<String, dynamic>;
+        final args = settings.arguments as Map<String, dynamic>?;
+        if (args == null) {
+          debugPrint('Fehler: Keine Argumente übergeben');
+          return MaterialPageRoute(builder: (context) => const LoginScreen());
+        }
         final categoryId = args['categoryId'] as String;
-        final checklists = (args['checklists'] as List).cast<ChecklistModel>();
+        final checklists = args['checklists'] as List<ChecklistModel>;
         return MaterialPageRoute(
-          builder: (context) => ChecklistScreen(
-              categoryId: categoryId,
-            checklists: checklists,
-          ),
+          builder:
+              (context) => ChecklistScreen(
+                categoryId: categoryId,
+                checklists: checklists,
+              ),
         );
       case dashboard:
         final token = settings.arguments as String;
