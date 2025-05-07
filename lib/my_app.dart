@@ -3,7 +3,7 @@ import 'package:test1/features/checklist_category/domain/models/checklist_model.
 import 'package:test1/features/checklist_category/presentation/screens/checklist_category_screen.dart';
 import 'package:test1/features/presentation/theme/app_theme.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
-import 'features/checklist/presentation/checklist_screen.dart';
+import 'features/checklist_category/checklist/presentation/checklist_screen.dart';
 import 'features/presentation/screens/dashboard_screen.dart';
 import 'features/presentation/screens/ticket_screen.dart';
 
