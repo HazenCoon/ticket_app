@@ -1,4 +1,4 @@
-import 'dart:ffi';
+import 'auftrag_checklist_model.dart';
 
 class AuftragModel {
   final String id;
@@ -51,21 +51,22 @@ class AuftragModel {
       countchecklist: json['countchecklist'],
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
-      'id':id,
-      'name':name,
-      'auftragnr':auftragnr,
-      'auftragtypname':auftragtypname,
-      'auftragtyp':auftragtyp,
-      'lastUpdated':lastUpdated,
-      'infotext':infotext,
-      'auftragsstatusId':auftragsstatusId,
-      'auftragsstatusName':auftragsstatusName,
-      'auftragchecklists':auftragchecklists.map((e) => e.toJson()).toList(),
-      'countauftragpos':countauftragpos,
-      'countchecklistdata':countchecklistdata,
-      'countchecklist':countchecklist,
+      'id': id,
+      'name': name,
+      'auftragnr': auftragnr,
+      'auftragtypname': auftragtypname,
+      'auftragtyp': auftragtyp,
+      'lastUpdated': lastUpdated,
+      'infotext': infotext,
+      'auftragsstatusId': auftragsstatusId,
+      'auftragsstatusName': auftragsstatusName,
+      'auftragchecklists': auftragchecklists.map((e) => e.toJson()).toList(),
+      'countauftragpos': countauftragpos,
+      'countchecklistdata': countchecklistdata,
+      'countchecklist': countchecklist,
     };
   }
 }
