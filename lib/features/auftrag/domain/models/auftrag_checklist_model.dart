@@ -19,13 +19,13 @@ class AuftragChecklistModel {
 
   factory AuftragChecklistModel.fromJson(Map<String, dynamic> json) {
     return AuftragChecklistModel(
-      name: json['name'],
-      checklistId: json['checklistId'],
-      checklistName: json['checklistName'],
-      checklistcategoryId: json['checklistcategoryId'],
-      checklistcategoryName: json['checklistcategoryName'],
-      appgroupId: json['appgroupId'],
-      appgroupname: json['appgroupname'],
+      name: json['name'] ?? '',
+      checklistId: json['checklistId'] ?? '',
+      checklistName: json['checklistName'] ?? '',
+      checklistcategoryId: json['checklistcategoryId'] ?? '',
+      checklistcategoryName: json['checklistcategoryName'] ?? '',
+      appgroupId: json['appgroupId'] ?? '',
+      appgroupname: json['appgroupname'] ?? '',
     );
   }
 

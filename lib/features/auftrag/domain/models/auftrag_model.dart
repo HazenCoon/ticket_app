@@ -33,22 +33,22 @@ class AuftragModel {
 
   factory AuftragModel.fromJson(Map<String, dynamic> json) {
     return AuftragModel(
-      id: json['id'],
-      name: json['name'],
-      auftragnr: json['auftragnr'],
-      auftragtypname: json['auftragtypname'],
-      auftragtyp: json['auftragtyp'],
-      lastUpdated: json['lastUpdated'],
-      auftragsstatusId: json['auftragsstatusId'],
-      auftragsstatusName: json['auftragsstatusName'],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      auftragnr: json['auftragnr'] ?? '',
+      auftragtypname: json['auftragtypname'] ?? '',
+      auftragtyp: json['auftragtyp'] ?? 0,
+      lastUpdated: json['lastUpdated'] ?? '',
+      auftragsstatusId: json['auftragsstatusId'] ?? '',
+      auftragsstatusName: json['auftragsstatusName'] ?? '',
       auftragchecklists:
           (json['checklists'] as List<dynamic>?)
               ?.map((e) => AuftragChecklistModel.fromJson(e))
               .toList() ??
           [],
-      countauftragpos: json['countauftragpos'],
-      countchecklistdata: json['countchecklistdata'],
-      countchecklist: json['countchecklist'],
+      countauftragpos: json['countauftragpos'] ?? 0,
+      countchecklistdata: json['countchecklistdata'] ?? 0,
+      countchecklist: json['countchecklist'] ?? 0,
     );
   }
 
