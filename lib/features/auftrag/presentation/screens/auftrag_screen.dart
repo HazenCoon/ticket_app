@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:test1/features/auftrag/data/services/auftrag_service.dart';
+import 'package:test1/features/auftrag/domain/models/auftrag_model.dart';
+import 'package:test1/my_app.dart';
 
 class AuftragScreen extends StatefulWidget {
   final String token;
@@ -12,8 +14,8 @@ class AuftragScreen extends StatefulWidget {
 }
 
 class _AuftragScreenState extends State<AuftragScreen> {
-  late AuftragService _auftragService;
-
+  final AuftragService _auftragService = AuftragService();
+  List<AuftragModel> _originalAuftraege = [];
   List<PlutoRow> _rows = [];
   List<PlutoColumn> _columns = [];
   bool _isLoading = true;
@@ -22,7 +24,6 @@ class _AuftragScreenState extends State<AuftragScreen> {
   @override
   void initState() {
     super.initState();
-    _auftragService = AuftragService();
     _setupColumns();
     _loadAuftraege();
   }
@@ -105,20 +106,23 @@ class _AuftragScreenState extends State<AuftragScreen> {
   Future<void> _loadAuftraege() async {
     try {
       final auftraege = await _auftragService.fetchAuftraege(widget.token);
+      _originalAuftraege = auftraege;
       _rows =
           auftraege.map((auftrag) {
             return PlutoRow(
               cells: {
                 'id': PlutoCell(value: auftrag.id),
-                'Auftrag': PlutoCell(value: auftrag.name),
-                'Auftragnr': PlutoCell(value: auftrag.auftragnr),
-                'Typ-Bezeichnung': PlutoCell(value: auftrag.auftragtypname),
-                'Typ': PlutoCell(value: auftrag.auftragtyp),
-                'Letztes Update': PlutoCell(value: auftrag.lastUpdated),
-                'Info': PlutoCell(value: auftrag.infotext),
-                'Status-Id': PlutoCell(value: auftrag.auftragsstatusId),
-                'Status': PlutoCell(value: auftrag.auftragsstatusName),
-                'Anzahl Checklists': PlutoCell(value: auftrag.countchecklist),
+                'name': PlutoCell(value: auftrag.name),
+                'auftragnr': PlutoCell(value: auftrag.auftragnr),
+                'auftragtypname': PlutoCell(value: auftrag.auftragtypname),
+                'auftragtyp': PlutoCell(value: auftrag.auftragtyp),
+                'lastUpdated': PlutoCell(value: auftrag.lastUpdated),
+                'infotext': PlutoCell(value: auftrag.infotext ?? ''),
+                'auftragsstatusId': PlutoCell(value: auftrag.auftragsstatusId),
+                'auftragsstatusName': PlutoCell(
+                  value: auftrag.auftragsstatusName,
+                ),
+                'countchecklist': PlutoCell(value: auftrag.countchecklist),
               },
             );
           }).toList();
@@ -132,6 +136,18 @@ class _AuftragScreenState extends State<AuftragScreen> {
     }
   }
 
+  void _onRowDoubleTap(PlutoGridOnRowDoubleTapEvent event) {
+    final tappedRow = event.row;
+    final auftragId = tappedRow.cells['id']?.value;
+    final auftrag = _originalAuftraege.firstWhere((a) => a.id == auftragId);
+
+    Navigator.pushNamed(
+      context,
+      MyAppRoutes.auftragChecklists,
+      arguments: auftrag.auftragchecklists,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -140,13 +156,13 @@ class _AuftragScreenState extends State<AuftragScreen> {
     if (_errorMessage != null) {
       return Center(child: Text(_errorMessage!));
     }
-
     return Scaffold(
       appBar: AppBar(title: const Text('Aufträge')),
       body: PlutoGrid(
         columns: _columns,
         rows: _rows,
-        mode: PlutoGridMode.normal,
+        mode: PlutoGridMode.selectWithOneTap,
+        onRowDoubleTap: _onRowDoubleTap,
       ),
     );
   }
