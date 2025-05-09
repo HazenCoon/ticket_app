@@ -54,9 +54,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
                 final token = prefs.getString('access_token');
-
                 if (!context.mounted) return;
-
                 if (token != null) {
                   Navigator.pushNamed(
                     context,
@@ -70,6 +68,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 }
               },
               child: Text('Zu den Checklist-Kategorien'),
+            ),
+
+            SizedBox(height: 30),
+
+            ElevatedButton(
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                final token = prefs.getString('access_token');
+                if (!context.mounted) return;
+                if (token != null) {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.auftraege,
+                    arguments: token,
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Kein Token gefunden')),
+                  );
+                }
+              },
+              child: const Text('Zu den Auftrags-Checklisten'),
             ),
           ],
         ),

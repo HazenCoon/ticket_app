@@ -53,15 +53,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Routing zum Dashboard
       if (mounted) {
-        Navigator.pushReplacementNamed(context, AppRoutes.dashboard, arguments: token);
+        Navigator.pushNamed(context, AppRoutes.dashboard, arguments: token);
       }
 
       // Fehler wird in _error gespeichert
     } on DioException catch (e) {
       final exception = handleDioError(e);
       setState(() {
-        _error = exception is AppException
-            ? exception.message : 'Ein unbekannter Fehler ist aufgetreten.';
+        _error =
+            exception is AppException
+                ? exception.message
+                : 'Ein unbekannter Fehler ist aufgetreten.';
       });
     } catch (e) {
       setState(() {

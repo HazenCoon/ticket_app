@@ -143,7 +143,7 @@ class _AuftragScreenState extends State<AuftragScreen> {
 
     Navigator.pushNamed(
       context,
-      AppRoutes.auftragChecklists,
+      AppRoutes.auftragchecklists,
       arguments: auftrag.auftragchecklists,
     );
   }

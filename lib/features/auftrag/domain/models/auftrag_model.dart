@@ -42,7 +42,7 @@ class AuftragModel {
       auftragsstatusId: json['auftragsstatusId'] ?? '',
       auftragsstatusName: json['auftragsstatusName'] ?? '',
       auftragchecklists:
-          (json['checklists'] as List<dynamic>?)
+          (json['auftragchecklists'] as List<dynamic>?)
               ?.map((e) => AuftragChecklistModel.fromJson(e))
               .toList() ??
           [],

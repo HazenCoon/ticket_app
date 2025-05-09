@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test1/features/auftrag/domain/models/auftrag_checklist_model.dart';
+import 'package:test1/features/auftrag/presentation/screens/auftrag_screen.dart';
 import 'package:test1/features/checklist_category/domain/models/checklist_model.dart';
 import 'package:test1/features/checklist_category/presentation/screens/checklist_category_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -14,7 +15,8 @@ class AppRoutes {
   static const String checklistCategory = '/checklistCategory';
   static const String login = '/login';
   static const String tickets = '/tickets';
-  static const String auftragChecklists = '/auftragChecklists';
+  static const String auftragchecklists = '/auftragChecklists';
+  static const String auftraege = '/auftraege';
 
   /// Statische Routen
   static Map<String, WidgetBuilder> get staticRoutes => {
@@ -25,6 +27,10 @@ class AppRoutes {
   /// Dynamische Routen
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+
+      case login:
+        return MaterialPageRoute(builder: (context) => const LoginScreen());
+
       case checklist:
         final args = settings.arguments as Map<String, dynamic>?;
         if (args == null) {
@@ -41,7 +47,7 @@ class AppRoutes {
               ),
         );
 
-      case auftragChecklists:
+      case auftragchecklists:
         final args = settings.arguments as List<AuftragChecklistModel>;
         return MaterialPageRoute(
           builder: (context) => AuftragChecklistScreen(checklists: args),
@@ -57,6 +63,12 @@ class AppRoutes {
         final String token = settings.arguments as String;
         return MaterialPageRoute(
           builder: (context) => ChecklistCategoryScreen(token: token),
+        );
+
+        case auftraege:
+        final String token = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (context) => AuftragScreen(token: token),
         );
 
       default:
