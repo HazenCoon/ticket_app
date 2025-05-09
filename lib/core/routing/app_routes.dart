@@ -1,31 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:test1/features/auftrag/domain/models/auftrag_checklist_model.dart';
+import 'package:test1/features/checklist_category/domain/models/checklist_model.dart';
 import 'package:test1/features/checklist_category/presentation/screens/checklist_category_screen.dart';
-import 'package:test1/features/presentation/screens/dashboard_screen.dart';
+import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/checklist_category/checklist/presentation/checklist_screen.dart';
+import '../../features/presentation/screens/dashboard_screen.dart';
+import '../../features/presentation/screens/ticket_screen.dart';
+import 'package:test1/features/auftrag/presentation/screens/auftrag_checklist_screen.dart';
 
-class MyAppRoutes {
-  static const login = '/login';
-  static const dashboard = '/dashboard';
-  static const tickets = '/tickets';
-  static const checklistCategory = '/checklistCategory';
+class AppRoutes {
+  static const String checklist = '/checklist';
+  static const String dashboard = '/dashboard';
+  static const String checklistCategory = '/checklistCategory';
+  static const String login = '/login';
+  static const String tickets = '/tickets';
+  static const String auftragChecklists = '/auftragChecklists';
 
+  /// Statische Routen
+  static Map<String, WidgetBuilder> get staticRoutes => {
+    login: (context) => const LoginScreen(),
+    tickets: (context) => const TicketGrid(),
+  };
+
+  /// Dynamische Routen
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case dashboard:
-        final String accessToken = settings.arguments as String;
+      case checklist:
+        final args = settings.arguments as Map<String, dynamic>?;
+        if (args == null) {
+          debugPrint('Fehler: Keine Argumente übergeben');
+          return _errorRoute();
+        }
+        final categoryId = args['categoryId'] as String;
+        final checklists = args['checklists'] as List<ChecklistModel>;
         return MaterialPageRoute(
-          builder: (_) => DashboardScreen(accessToken: accessToken),
+          builder:
+              (context) => ChecklistScreen(
+                categoryId: categoryId,
+                checklists: checklists,
+              ),
         );
+
+      case auftragChecklists:
+        final args = settings.arguments as List<AuftragChecklistModel>;
+        return MaterialPageRoute(
+          builder: (context) => AuftragChecklistScreen(checklists: args),
+        );
+
+      case dashboard:
+        final String token = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (context) => DashboardScreen(accessToken: token),
+        );
+
       case checklistCategory:
         final String token = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => ChecklistCategoryScreen(token: token),
+          builder: (context) => ChecklistCategoryScreen(token: token),
         );
+
       default:
-        return MaterialPageRoute(
-          builder:
-              (_) =>
-                  Scaffold(body: Center(child: Text('Route nicht gefunden.'))),
-        );
+        return _errorRoute();
     }
+  }
+
+  static Route<dynamic> _errorRoute() {
+    return MaterialPageRoute(
+      builder:
+          (context) =>
+              const Scaffold(body: Center(child: Text('Route nicht gefunden'))),
+    );
   }
 }

@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test1/features/auftrag/domain/models/auftrag_checklist_model.dart';
-import 'package:test1/features/checklist_category/domain/models/checklist_model.dart';
-import 'package:test1/features/checklist_category/presentation/screens/checklist_category_screen.dart';
 import 'package:test1/features/presentation/theme/app_theme.dart';
-import 'features/auth/presentation/screens/login_screen.dart';
-import 'features/checklist_category/checklist/presentation/checklist_screen.dart';
-import 'features/presentation/screens/dashboard_screen.dart';
-import 'features/presentation/screens/ticket_screen.dart';
-import 'package:test1/features/auftrag/presentation/screens/auftrag_checklist_screen.dart';
-
+import 'package:test1/core/routing/app_routes.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -18,69 +10,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Ticket App',
       theme: appTheme,
-
-      // Statische Routen
-      initialRoute: MyAppRoutes.login,
-      routes: {
-        MyAppRoutes.login: (context) => const LoginScreen(),
-        MyAppRoutes.tickets: (context) => const TicketGrid(),
-      },
-
-      // Dynamische Routen
-      onGenerateRoute: MyAppRoutes.generateRoute,
+      initialRoute: AppRoutes.login,
+      routes: AppRoutes.staticRoutes,
+      onGenerateRoute: AppRoutes.generateRoute,
     );
-  }
-}
-
-class MyAppRoutes {
-  static const String checklist = '/checklist';
-  static const String dashboard = '/dashboard';
-  static const String checklistCategory = '/checklistCategory';
-  static const String login = '/login';
-  static const String tickets = '/tickets';
-  static const String auftragChecklists = '/auftragChecklists';
-
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case checklist:
-        final args = settings.arguments as Map<String, dynamic>?;
-        if (args == null) {
-          debugPrint('Fehler: Keine Argumente übergeben');
-          return MaterialPageRoute(builder: (context) => const LoginScreen());
-        }
-        final categoryId = args['categoryId'] as String;
-        final checklists = args['checklists'] as List<ChecklistModel>;
-        return MaterialPageRoute(
-          builder:
-              (context) => ChecklistScreen(
-                categoryId: categoryId,
-                checklists: checklists,
-              ),
-        );
-
-      case auftragChecklists:
-        final args = settings.arguments as List<AuftragChecklistModel>;
-        return MaterialPageRoute(
-          builder: (context) => AuftragChecklistScreen(checklists: args),
-        );
-
-      case dashboard:
-        final token = settings.arguments as String;
-        return MaterialPageRoute(
-          builder: (context) => DashboardScreen(accessToken: token),
-        );
-
-      case checklistCategory:
-        final token = settings.arguments;
-        if (token is String) {
-          return MaterialPageRoute(
-            builder: (context) => ChecklistCategoryScreen(token: token),
-          );
-        } else {
-          return MaterialPageRoute(builder: (context) => const LoginScreen());
-        }
-      default:
-        return MaterialPageRoute(builder: (context) => const LoginScreen());
-    }
   }
 }

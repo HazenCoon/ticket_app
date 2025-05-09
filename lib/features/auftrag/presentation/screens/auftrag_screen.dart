@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:test1/features/auftrag/data/services/auftrag_service.dart';
 import 'package:test1/features/auftrag/domain/models/auftrag_model.dart';
-import 'package:test1/my_app.dart';
+import '../../../../core/routing/app_routes.dart';
 
 class AuftragScreen extends StatefulWidget {
   final String token;
@@ -143,7 +143,7 @@ class _AuftragScreenState extends State<AuftragScreen> {
 
     Navigator.pushNamed(
       context,
-      MyAppRoutes.auftragChecklists,
+      AppRoutes.auftragChecklists,
       arguments: auftrag.auftragchecklists,
     );
   }
