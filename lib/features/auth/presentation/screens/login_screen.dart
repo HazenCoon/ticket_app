@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test1/core/errors/app_exception.dart';
 import 'package:test1/core/errors/dio_error_handler.dart';
 import 'package:test1/core/network/api_client.dart';
-import 'package:test1/core/routing/app_routes.dart';
+import '../../../../app/routing/app_routes.dart';
 
 // LoginScreen Widget
 class LoginScreen extends StatefulWidget {

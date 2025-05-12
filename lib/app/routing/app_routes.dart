@@ -3,10 +3,10 @@ import 'package:test1/features/auftrag/domain/models/auftrag_checklist_model.dar
 import 'package:test1/features/auftrag/presentation/screens/auftrag_screen.dart';
 import 'package:test1/features/checklist_category/domain/models/checklist_model.dart';
 import 'package:test1/features/checklist_category/presentation/screens/checklist_category_screen.dart';
+import '../../features/app/presentation/screens/dashboard_screen.dart';
+import '../../features/app/presentation/screens/ticket_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/checklist_category/checklist/presentation/checklist_screen.dart';
-import '../../features/presentation/screens/dashboard_screen.dart';
-import '../../features/presentation/screens/ticket_screen.dart';
 import 'package:test1/features/auftrag/presentation/screens/auftrag_checklist_screen.dart';
 
 class AppRoutes {

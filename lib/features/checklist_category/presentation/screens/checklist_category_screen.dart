@@ -4,7 +4,7 @@ import 'package:test1/core/network/api_client.dart';
 import 'package:test1/features/checklist_category/data/services/checklist_category_service.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:test1/features/checklist_category/domain/models/checklist_category_model.dart';
-import '../../../../core/routing/app_routes.dart';
+import '../../../../app/routing/app_routes.dart';
 
 // Klasse ChecklistCategoryScreen
 class ChecklistCategoryScreen extends StatefulWidget {

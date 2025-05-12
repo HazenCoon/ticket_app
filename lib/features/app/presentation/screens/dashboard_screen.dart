@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:test1/core/routing/app_routes.dart';
+import '../../../../app/routing/app_routes.dart';
 
 // Klasse DashboardScreen
 class DashboardScreen extends StatefulWidget {
