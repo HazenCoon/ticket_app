@@ -83,4 +83,4 @@ class AppRoutes {
               const Scaffold(body: Center(child: Text('Route nicht gefunden'))),
     );
   }
-}
+} 
