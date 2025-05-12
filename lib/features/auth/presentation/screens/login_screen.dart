@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test1/core/errors/app_exception.dart';
 import 'package:test1/core/errors/dio_error_handler.dart';
 import 'package:test1/core/network/api_client.dart';
-import 'package:test1/core/routing/app_routes.dart';
+import '../../../../app/routing/app_routes.dart';
 
 // LoginScreen Widget
 class LoginScreen extends StatefulWidget {
@@ -53,15 +53,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Routing zum Dashboard
       if (mounted) {
-        Navigator.pushReplacementNamed(context, MyAppRoutes.dashboard, arguments: token);
+        Navigator.pushNamed(context, AppRoutes.dashboard, arguments: token);
       }
 
       // Fehler wird in _error gespeichert
     } on DioException catch (e) {
       final exception = handleDioError(e);
       setState(() {
-        _error = exception is AppException
-            ? exception.message : 'Ein unbekannter Fehler ist aufgetreten.';
+        _error =
+            exception is AppException
+                ? exception.message
+                : 'Ein unbekannter Fehler ist aufgetreten.';
       });
     } catch (e) {
       setState(() {
