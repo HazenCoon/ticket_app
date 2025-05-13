@@ -1,20 +1,47 @@
 import 'auftrag_checklist_model.dart';
 
+/// Modell zur Darstellung eines Auftrags mit zugehörigen Checklisten
 class AuftragModel {
+  /// Eindeutige ID des Auftrags
   final String id;
+
+  /// Anzeigename des Auftrags
   final String name;
+
+  /// Auftragsnummer
   final String auftragnr;
+
+  /// Name des Auftragstyps
   final String auftragtypname;
+
+  /// Typ-ID des Auftrags
   final int auftragtyp;
+
+  /// Letztes Änderungsdatum
   final String lastUpdated;
+
+  /// Optionaler Infotext zum Auftrag
   final String? infotext;
+
+  /// Status-ID des Auftrags
   final String auftragsstatusId;
+
+  /// Klartext-Status des Auftrags
   final String auftragsstatusName;
+
+  /// Liste der Checklisten, die diesem Auftrag zugeordnet sind
   final List<AuftragChecklistModel> auftragchecklists;
+
+  /// Anzahl der Auftragspositionen
   final int countauftragpos;
+
+  /// Anzahl ausgefüllter Checklisten-Daten
   final int countchecklistdata;
+
+  /// Anzahl der zugeordneten Checklisten
   final int countchecklist;
 
+  /// Konstruktor für AuftragModel
   AuftragModel({
     required this.id,
     required this.name,
@@ -31,6 +58,7 @@ class AuftragModel {
     required this.countchecklist,
   });
 
+  /// Erstellt ein AuftragModel-Objekt aus einer JSON-Map
   factory AuftragModel.fromJson(Map<String, dynamic> json) {
     return AuftragModel(
       id: json['id'] ?? '',
@@ -52,6 +80,7 @@ class AuftragModel {
     );
   }
 
+  /// Konvertiert das AuftragModel in eine JSON-Map
   Map<String, dynamic> toJson() {
     return {
       'id': id,

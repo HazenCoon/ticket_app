@@ -6,7 +6,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:test1/features/checklist_category/domain/models/checklist_category_model.dart';
 import '../../../../app/routing/app_routes.dart';
 
-// Klasse ChecklistCategoryScreen
+/// Bildschirm für die Anzeige der Checklist-Kategorien
 class ChecklistCategoryScreen extends StatefulWidget {
   final String token; // Token wird über Konstruktor übergeben
 
@@ -17,7 +17,7 @@ class ChecklistCategoryScreen extends StatefulWidget {
       _ChecklistCategoryScreenState();
 }
 
-// Klasse ChecklistCategoryScreenState
+/// Zustand und Logik für den ChecklistCategoryScreen
 class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
   List<ChecklistCategoryModel> categoryList = [];
   String? expandedCategoryId;
@@ -33,6 +33,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
     _initializeData();
   }
 
+  /// Definiert die Spalten des PlutoGrids
   void _setupColumns() {
     _columns = [
       PlutoColumn(
@@ -67,7 +68,7 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
     ];
   }
 
-  // Methode zum Laden der Daten
+  /// Lädt die Checklisten-Kategoriedaten vom API
   Future<void> _initializeData() async {
     try {
       if (widget.token.isEmpty) {
@@ -125,7 +126,6 @@ class _ChecklistCategoryScreenState extends State<ChecklistCategoryScreen> {
                 columns: _columns,
                 rows: _rows,
                 mode: PlutoGridMode.normal,
-                // Navigation bei Klick auf Kategorie-Zeile
                 onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event) {
                   final row = event.row;
                   final rowType = row.cells['typeName']?.value;

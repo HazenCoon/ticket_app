@@ -1,12 +1,27 @@
+/// Modell zur Repräsentation einer Auftrags-Checkliste
 class AuftragChecklistModel {
+  /// Name des Auftrags
   final String name;
+
+  /// ID der Checkliste
   final String checklistId;
+
+  /// Name der Checkliste
   final String checklistName;
+
+  /// ID der Checklisten-Kategorie
   final String checklistcategoryId;
+
+  /// Name der Checklisten-Kategorie
   final String checklistcategoryName;
+
+  /// ID der App-Gruppe
   final String appgroupId;
+
+  /// Name der App-Gruppe
   final String appgroupname;
 
+  /// Konstruktor für AuftragsChecklistModel
   AuftragChecklistModel({
     required this.name,
     required this.checklistId,
@@ -17,6 +32,7 @@ class AuftragChecklistModel {
     required this.appgroupname,
   });
 
+  /// Erzeugt eine Instanz aus einem JSON-Objekt
   factory AuftragChecklistModel.fromJson(Map<String, dynamic> json) {
     return AuftragChecklistModel(
       name: json['name'] ?? '',
@@ -29,6 +45,7 @@ class AuftragChecklistModel {
     );
   }
 
+  /// Konvertiert das Objekt in ein JSON-Format
   Map<String, dynamic> toJson() {
     return {
       'name': name,

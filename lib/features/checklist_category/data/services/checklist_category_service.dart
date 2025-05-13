@@ -4,14 +4,20 @@ import 'package:test1/core/errors/dio_error_handler.dart';
 import 'package:test1/features/checklist_category/domain/models/checklist_category_model.dart';
 import '../../../../core/network/api_config.dart' as api_config;
 
-// Klasse ChecklistCategory
+/// Service zum Abrufen von Checklist-Kategorien und deren Checklisten
 class ChecklistCategoryService {
   final Dio _dio;
 
-  // Konstruktor um Dio zu initialisieren
+  /// Erstellt den Service mit einer Dio-Instanz
   ChecklistCategoryService(this._dio);
 
-  // Methode zum Abrufen der Checklist-Kategorien und deren Checklisten
+  /// Ruft alle Checklist-Kategorien inklusive Checklisten vom Backend ab
+  ///
+  /// [token] - gültiger Benutzer-Token für Authentifizierung
+  ///
+  /// Gibt eine Liste von [ChecklistCategoryModel] zurück
+  ///
+  /// Wirft [FetchDataException] oder eine Dio-basierte Exception bei Fehlern
   Future<List<ChecklistCategoryModel>> fetchChecklistCategories({
     required String token,
   }) async {
@@ -22,15 +28,13 @@ class ChecklistCategoryService {
           headers: {
             'x-api-token': token,
             'Content-Type': 'application/json',
-            'Accept': 'application/json', // Erwartet JSON-Antwort
+            'Accept': 'application/json',
           },
         ),
       );
 
-      // Überprüfen der Antwort und Mapping auf das Modell
       if (response.statusCode == 200 && response.data != null) {
         if (response.data is List) {
-          // Umwandlung der Antwort in eine Liste von ChecklistCategoryModel
           return (response.data as List)
               .map((json) => ChecklistCategoryModel.fromJson(json))
               .toList();
@@ -39,9 +43,7 @@ class ChecklistCategoryService {
             'Die Antwort ist nicht im erwarteten Listenformat',
           );
         }
-      }
-      // Fehlerbehandlung
-      else {
+      } else {
         throw FetchDataException(
           'Fehler beim Abrufen der Kategorien: ${response.statusCode}',
         );

@@ -1,10 +1,20 @@
 import 'package:test1/features/checklist_category/domain/models/checklist_model.dart';
 
+/// Datenmodell für eine Kategorie, die eine Gruppe von Checklisten enthält
 class ChecklistCategoryModel {
+  /// Eindeutige ID der Kategorie
   final String id;
+
+  /// Anzeigename der Kategorie
   final String name;
+
+  /// ID der zugehörigen Appgruppe
   final String appgroupId;
+
+  /// Name der Appgruppe
   final String appgroupName;
+
+  /// Liste der enthaltenen Checklisten
   final List<ChecklistModel> checklists; // Liste von Checklisten
 
   ChecklistCategoryModel({
@@ -15,7 +25,7 @@ class ChecklistCategoryModel {
     required this.checklists,
   });
 
-  // Facorty-Methode zur Umwandlung von JSON
+  /// Factory-Methode zur Erstellung eines Objekts aus einem JSON-Map
   factory ChecklistCategoryModel.fromJson(Map<String, dynamic> json) {
     return ChecklistCategoryModel(
       id: json['id']?.toString() ?? '',
