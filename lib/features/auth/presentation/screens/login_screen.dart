@@ -6,7 +6,7 @@ import 'package:test1/core/errors/dio_error_handler.dart';
 import 'package:test1/core/network/api_client.dart';
 import '../../../../app/routing/app_routes.dart';
 
-// LoginScreen Widget
+/// LoginScreen zur Authentifizierung des Benutzers
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -14,7 +14,7 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-// Zustand & Controller
+/// Zustand & Logik für LoginScreen
 class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -28,13 +28,13 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  // Methode zum Speichern des Tokens
+  /// Speichert den Access-Token im lokalen Speicher
   Future<void> saveToken(String token) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('access_token', token);
   }
 
-  // Login-Methode
+  /// Führt den Login-Prozess aus
   void _login() async {
     setState(() {
       _loading = true;
@@ -48,15 +48,13 @@ class _LoginScreenState extends State<LoginScreen> {
         _passwordController.text,
       );
 
-      // Benutzername und Passwort werden an die API geschickt
+      // Token speichern
       await saveToken(token);
 
-      // Routing zum Dashboard
+      // Navigation zum Dashboard bei Erfolg
       if (mounted) {
         Navigator.pushNamed(context, AppRoutes.dashboard, arguments: token);
       }
-
-      // Fehler wird in _error gespeichert
     } on DioException catch (e) {
       final exception = handleDioError(e);
       setState(() {
@@ -80,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  /// Baut das Login-Formular auf
   Widget _buildLoginForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

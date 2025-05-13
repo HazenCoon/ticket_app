@@ -1,6 +1,10 @@
 import 'package:dio/dio.dart';
 import 'custom_exceptions.dart';
 
+/// Fehlerbehandlung für Dio-Fehler (z.B. Netzwerkprobleme, API-Fehler).
+///
+/// Diese Methode übersetzt 'Dio-Exception' in die passenden benutzerdefinierten
+/// Exceptions, um spezifische Fehler zu  behandeln.
 Exception handleDioError(DioException error) {
   switch (error.type) {
     case DioExceptionType.connectionTimeout:
@@ -25,8 +29,7 @@ Exception handleDioError(DioException error) {
       return handleGeneralError('Unbekannter Verbindungsfehler');
   }
 }
-
-// Zentrale Fehlerbehandlungsmethode
+/// Zentrale Methode zur Erstellung einer allgemeinen Fehler-Exception.
 Exception handleGeneralError(String message) {
   return FetchDataException(message);
 }

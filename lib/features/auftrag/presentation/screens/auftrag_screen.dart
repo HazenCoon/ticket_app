@@ -4,6 +4,8 @@ import 'package:test1/features/auftrag/data/services/auftrag_service.dart';
 import 'package:test1/features/auftrag/domain/models/auftrag_model.dart';
 import '../../../../app/routing/app_routes.dart';
 
+/// Zeigt eine Liste aller Aufträge in einer PlutoGrid-Tabelle.
+/// Bietet Suche nach Auftragsname sowie Filterung nach Auftragstyp.
 class AuftragScreen extends StatefulWidget {
   final String token;
 
@@ -16,15 +18,19 @@ class AuftragScreen extends StatefulWidget {
 class _AuftragScreenState extends State<AuftragScreen> {
   final AuftragService _auftragService = AuftragService();
 
-  List<AuftragModel> _originalAuftraege = [];
-  List<PlutoRow> _rows = [];
-  List<PlutoColumn> _columns = [];
-  bool _isLoading = true;
-  String? _errorMessage;
-  String _searchQuery = '';
-  String? _selectedTyp;
-  PlutoGridStateManager? _stateManager;
+  List<AuftragModel> _originalAuftraege =
+      []; // Ursprüngliche Liste aller Aufträge
+  List<PlutoRow> _rows = []; // Gefilterte Rows für die Tabelle
+  List<PlutoColumn> _columns = []; // Spaltendefinition für PlutoGrid
 
+  bool _isLoading = true; // Zeigt Ladezustand an
+  String? _errorMessage; // Fehlermeldung, falls vorhanden
+
+  String _searchQuery = ''; // Suchbegriff für Namessuche
+  String? _selectedTyp; // Filterwert für Auftragstyp
+  PlutoGridStateManager? _stateManager; // Referenz auf PlutoGrid-Manager
+
+  /// Alle verfügbaren Auftragtypen für das Dropdown
   List<String> get _auftragtypen =>
       _originalAuftraege
           .map((e) => e.auftragtypname)
@@ -39,6 +45,7 @@ class _AuftragScreenState extends State<AuftragScreen> {
     _loadAuftraege();
   }
 
+  /// Definiert die Spaltenstruktur des PlutoGrids
   void _setupColumns() {
     _columns = [
       PlutoColumn(
@@ -116,6 +123,7 @@ class _AuftragScreenState extends State<AuftragScreen> {
 
   bool get _isGridReady => mounted && _columns.isNotEmpty;
 
+  /// Lädt die Aufträge vom Backend und zeigt sie an
   Future<void> _loadAuftraege() async {
     try {
       final auftraege = await _auftragService.fetchAuftraege(widget.token);
@@ -134,8 +142,9 @@ class _AuftragScreenState extends State<AuftragScreen> {
     }
   }
 
+  /// Filtert die Aufträge basierend auf Name und Typ-Auswahl
   void _filterRows() {
-    if(_stateManager == null) return;
+    if (_stateManager == null) return;
     final filtered =
         _originalAuftraege.where((auftrag) {
           final matchesName = auftrag.name.toLowerCase().contains(_searchQuery);
@@ -168,6 +177,7 @@ class _AuftragScreenState extends State<AuftragScreen> {
     _stateManager!.appendRows(_rows);
   }
 
+  /// Bei Doppelklick: Navigation zu den Checklisten des Auftrags
   void _onRowDoubleTap(PlutoGridOnRowDoubleTapEvent event) {
     final tappedRow = event.row;
     final auftragId = tappedRow.cells['id']?.value;
@@ -192,6 +202,7 @@ class _AuftragScreenState extends State<AuftragScreen> {
       appBar: AppBar(centerTitle: true, title: const Text('Aufträge')),
       body: Column(
         children: [
+          // Suchfeld
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
@@ -207,6 +218,7 @@ class _AuftragScreenState extends State<AuftragScreen> {
               },
             ),
           ),
+          // Dropdown für Auftragstyp
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: DropdownButtonFormField<String>(
@@ -232,6 +244,7 @@ class _AuftragScreenState extends State<AuftragScreen> {
 
           const SizedBox(height: 8.0),
 
+          // Tabelle
           Expanded(
             child: PlutoGrid(
               columns: _columns,

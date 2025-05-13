@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../app/routing/app_routes.dart';
 
-// Klasse DashboardScreen
+/// DashboardScreen zeigt Einstiegsmöglichkeiten für Tickets,
+/// Checklistenkategorien und Auftrags-Checklisten.
 class DashboardScreen extends StatefulWidget {
+  /// Zugriffstoken, der beim Login empfangen wurde.
   final String accessToken;
 
   const DashboardScreen({super.key, required this.accessToken});
@@ -39,7 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             const SizedBox(height: 50),
 
-            // Button für die Navigation zur TicketGrid
+            /// Button für die Ticket-Tabelle.
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.tickets);
@@ -49,7 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             SizedBox(height: 30),
 
-            // Button für die Navigation zur ChecklistCategory
+            /// Button zu den Checklist-Kategorien mit Token aus SharedPreferences.
             ElevatedButton(
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
@@ -63,7 +65,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Kein Token gefunden')),
+                    const SnackBar(
+                      content: Text('Fehler beim Lesen des Tokens'),
+                    ),
                   );
                 }
               },
@@ -72,6 +76,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             SizedBox(height: 30),
 
+            /// Button zu den Auftrags-Checklisten mit Token aus SharedPrefences.
             ElevatedButton(
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
@@ -85,7 +90,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Kein Token gefunden')),
+                    const SnackBar(
+                      content: Text('Fehler beim Lesen des Tokens'),
+                    ),
                   );
                 }
               },

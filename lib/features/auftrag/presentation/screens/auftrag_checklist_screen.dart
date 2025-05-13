@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:test1/features/auftrag/domain/models/auftrag_checklist_model.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+/// Zeigt die Checklisten eines Auftrags in einer PlutoGrid-Tabelle an
 class AuftragChecklistScreen extends StatefulWidget {
+  /// Liste der Checklisten, die zu einem Auftrag gehören
   final List<AuftragChecklistModel> checklists;
 
   const AuftragChecklistScreen({super.key, required this.checklists});
@@ -22,6 +24,7 @@ class _AuftragChecklistScreenState extends State<AuftragChecklistScreen> {
     _setupRows();
   }
 
+  // Definiert die Spaltenstruktur für das Grid
   void _setupColumns() {
     _columns = [
       PlutoColumn(
@@ -76,6 +79,7 @@ class _AuftragChecklistScreenState extends State<AuftragChecklistScreen> {
     ];
   }
 
+  // Wandelt die Checklisten-Daten in Zeilen für das Grid um
   void _setupRows() {
     _rows =
         widget.checklists.map((checklist) {

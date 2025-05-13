@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:test1/features/checklist_category/domain/models/checklist_model.dart';
 
+/// Zeigt alle Checklisten einer Kategorie in einem PlutoGrid an.
 class ChecklistScreen extends StatefulWidget {
   final String categoryId;
   final List<ChecklistModel> checklists;
@@ -16,10 +17,12 @@ class ChecklistScreen extends StatefulWidget {
   State<ChecklistScreen> createState() => _ChecklistScreenState();
 }
 
+/// Zustand und Aufbau der Checklistenanzeige
 class _ChecklistScreenState extends State<ChecklistScreen> {
   List<PlutoColumn> _columns = [];
   final List<PlutoRow> _rows = [];
   bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -28,7 +31,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     _loadChecklists();
   }
 
-  // Definition der Spalten für das Grid
+  /// Initialisiert die Spaltenkonfiguration des PlutoGrids
   void _setupColumns() {
     _columns = [
       PlutoColumn(
@@ -104,39 +107,46 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     ];
   }
 
-  // API-Call für die Checklisten
+  /// Lädt und konvertiert die Checklisten in PlutoGrid-Zeilen
   Future<void> _loadChecklists() async {
-    final List<PlutoRow> rows =
-        widget.checklists.isNotEmpty
-            ? widget.checklists.map((ChecklistModel checklist) {
-              return PlutoRow(
-                cells: {
-                  'id': PlutoCell(value: checklist.id),
-                  'name': PlutoCell(value: checklist.name),
-                  'typeId': PlutoCell(value: checklist.typeId),
-                  'typename': PlutoCell(value: checklist.typeName),
-                  'owner': PlutoCell(value: checklist.owner),
-                  'appgroupId': PlutoCell(value: checklist.appgroupId),
-                  'appgroupname': PlutoCell(value: checklist.appgroupname),
-                  'checklistcategoryId': PlutoCell(
-                    value: checklist.checklistcategoryId,
-                  ),
-                  'checklistcategoryName': PlutoCell(
-                    value: checklist.checklistcategoryName,
-                  ),
-                  'isfavorite': PlutoCell(
-                    value: checklist.isfavorite ? 'Nein' : 'Ja',
-                  ),
-                },
-              );
-            }).toList()
-            : [];
+    try {
+      final List<PlutoRow> rows =
+          widget.checklists.isNotEmpty
+              ? widget.checklists.map((ChecklistModel checklist) {
+                return PlutoRow(
+                  cells: {
+                    'id': PlutoCell(value: checklist.id),
+                    'name': PlutoCell(value: checklist.name),
+                    'typeId': PlutoCell(value: checklist.typeId),
+                    'typename': PlutoCell(value: checklist.typeName),
+                    'owner': PlutoCell(value: checklist.owner),
+                    'appgroupId': PlutoCell(value: checklist.appgroupId),
+                    'appgroupname': PlutoCell(value: checklist.appgroupname),
+                    'checklistcategoryId': PlutoCell(
+                      value: checklist.checklistcategoryId,
+                    ),
+                    'checklistcategoryName': PlutoCell(
+                      value: checklist.checklistcategoryName,
+                    ),
+                    'isfavorite': PlutoCell(
+                      value: checklist.isfavorite ? 'Nein' : 'Ja',
+                    ),
+                  },
+                );
+              }).toList()
+              : [];
 
-    setState(() {
-      _rows.clear();
-      _rows.addAll(rows);
-      _isLoading = false;
-    });
+      setState(() {
+        _rows.clear();
+        _rows.addAll(rows);
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _error = 'Fehler beim Laden der Checklisten';
+      });
+    }
   }
 
   @override
@@ -146,6 +156,12 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
+              : _error != null
+              ? Center(
+                child: Text(_error!, style: TextStyle(color: Colors.red)),
+              )
+              : _rows.isEmpty
+              ? const Center(child: Text('Keine Checklisten gefunden'))
               : PlutoGrid(
                 columns: _columns,
                 rows: _rows,
